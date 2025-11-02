@@ -2,6 +2,7 @@
 
 require 'sinatra'
 require 'json'
+require 'rack/cors'
 
 class LogStreamer
   def initialize(log_dir, logfile_name = "latest")
@@ -35,8 +36,15 @@ class LogStreamer
   end
 end
 
+use Rack::Cors do
+  allow do
+    origins '*'
+    resource '*', headers: :any, methods: [:get, :post, :put, :delete, :options]
+  end
+end
+
 get '/log' do
-  streamer = LogStreamer.new("logs", "big.txt")
+  streamer = LogStreamer.new("logs", "foo.txt")
   offset = params[:offset]
   num = params[:num]
   token = params[:token]
